@@ -22,7 +22,7 @@ export default {
     transition: 300ms;
     font-size: 1.5rem;
     font-weight: 700;
-    border-radius: 50px;
+    border-radius: 6px;
     cursor: pointer;
     height: fit-content;
     @media (min-width: 768px) {
@@ -34,22 +34,21 @@ export default {
     &.primary {
         background-color: $primary;
         border: none;
-        color: $secondary;
+        color: #000;
         @media (min-width: 768px) {
             &:hover {
                 background-color: $primary600;
-                color: $secondary;
             }
         }
     }
     &.secondary {
         background-color: $secondary;
         border: none;
-        color: #fff;
+        color: #000;
         @media (min-width: 768px) {
             &:hover {
-                background-color: $secondary800;
-                color: #fff;
+                background-color: $secondary600;
+                color: #000;
             }
         }
     }

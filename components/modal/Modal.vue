@@ -4,14 +4,15 @@
         <div class="modal_container">
             <div class="modal_content">
                 <div class="modal_content_top">
-                    <img src="@/assets/images/image.png" alt="worklife">
+                    <img :src="item.headerImage.url" :alt="item.title">
                     <div class="modal_content_top_right">
-                        <h2>title</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid distinctio quia cumque blanditiis adipisci repellat, dolore suscipit excepturi ullam quam a quae, facere, sequi autem facilis provident nulla saepe labore.</p>
+                        <h2>{{ item.title }}</h2>
+                        <p>{{ item.longTitle }}</p>
                     </div>
                 </div>
                 <div class="modal_content_bottom">
-                    <Button>Add to favorites</Button>
+                    <Button @click.native="toFavorites" v-if="isFavorites">Remove from favorites</Button>
+                    <Button @click.native="toFavorites" v-else>Add to favorites</Button>
                     <Button :color="'secondary'" @click.native="toItem">View details</Button>
                 </div>
                 <div class="modal_content_exit" @click="exitModal">
@@ -29,14 +30,39 @@ export default {
     components: {
         Cross
     },
+    data() {
+        return {
+            isFavorites: false
+        }
+    },
+    computed: {
+        item() {
+            return this.$store.state.item
+        }
+    },
     methods: {
         exitModal() {
-            this.$store.dispatch('toggleModal');
+            this.$store.dispatch('toggleModal', this.item);
         },
         toItem() {
-            this.$router.push('/item');
+            this.$router.push({path:'/item', query: {title: this.item.title}});
             this.exitModal();
+        },
+        toFavorites() {
+            if (this.isFavorites) {
+                this.$store.dispatch('removeFavorite', this.item);
+            } else {
+                this.$store.dispatch('toFavorites', this.item);
+            }
+            this.isFavorites = !this.isFavorites;
         }
+    },
+    mounted() {
+        this.$store.state.favorites.forEach(e => {
+            if (e.id == this.item.id) {
+                this.isFavorites = true
+            };
+        });
     },
 }
 </script>
@@ -68,9 +94,11 @@ export default {
     .modal_content {
         position: relative;
         z-index: 1;
-        background-color: #fff;
+        background-color: #40474f;
         padding: 6rem;
         max-width: 70rem;
+        border-radius: 6px;
+        overflow: hidden;
         @media(max-width: 1024px) {
             width: 100%;
             max-width: none;
@@ -83,6 +111,10 @@ export default {
             }
             img {
                 max-width: 50%;
+                min-height: 30rem;
+                object-fit: cover;
+                border-radius: 6px;
+                overflow: hidden;
             }
             h2 {
                 font-size: 2rem;

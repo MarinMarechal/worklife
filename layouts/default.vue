@@ -4,7 +4,7 @@
         <div class="layout-content">
             <nuxt />
         </div>
-        <Modal v-if="isModal" />
+        <Modal v-if="isModalOpen" />
     </div>
 </template>
 
@@ -20,10 +20,15 @@ export default {
         Header,
         Modal
     },
+    data() {
+        return {
+            isModalOpen: false
+        }
+    },
     computed: mapState(['isModal']),
     watch: {
         "$store.state.isModal" (newValue, oldValue) {
-            this.isModal = newValue;
+            this.isModalOpen = newValue;
         },
     },
     mounted() {
@@ -39,6 +44,7 @@ export default {
         max-width: 120rem;
         margin: auto;
         padding: 3rem;
+        padding-bottom: 8rem;
     }
 }
 </style>

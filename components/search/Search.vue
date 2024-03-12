@@ -2,12 +2,13 @@
     <div id="search">
         <div class="search_container">
             <div class="search_input">
-                <input type="text" v-model="inputCity" placeholder="Entrez une ville ou un code-postal" :disabled="isSelected">
+                <input type="text" v-model="inputItem" placeholder="Search" @keyup.enter="toSearch">
             </div>
-            <button class="desktop glass" ><Glass /></button>
+            <button class="desktop" @click="toSearch"><Glass /></button>
         </div>
     </div>
 </template>
+
 <script>
 import Glass from '@/components/UI/pictos/Magnifying-glass.vue'
 
@@ -17,21 +18,27 @@ export default {
     },
     data() {
         return {
-            inputCity: '',
-            isSelected: false,
+            inputItem: '',
         }
     },
     methods: {
-       
+        toSearch() {
+            this.$store.dispatch('searchItems', this.inputItem);
+            this.$emit("search");
+            this.inputItem = ''
+        }
     }
 }
 </script>
+
 <style lang="scss" scoped>
 #search {
+    max-width: 50rem;
+    margin: auto;
     .search_container {
-        background-color: #fff;
-        border: 2px solid $secondary;
-        border-radius: 50px;
+        background-color: #40474f;
+        border: 2px solid $primary;
+        border-radius: 6px;
         display: flex;
         box-shadow: 0 0px 30px rgb(0 22 84 / 15%);
         overflow: hidden;
@@ -47,45 +54,48 @@ export default {
                 font-size: 1.6rem;
                 padding: 1rem 2rem;
                 border: none;
-                border-radius: 50px;
+                border-radius: 6px;
                 position: relative;
                 width: 100%;
+                background-color: #40474f;
+                color: $primary;
                 &:focus {
                     outline: none;
+                }
+                &::placeholder {
+                    color: $primary;
+                    opacity: 1;
                 }
             }
         }
         button {
-            background-color: #f85b5b;
-            width: 50px;
-            height: 50px;
+            background-color: $primary;
+            width: 60px;
+            height: 60px;
             min-width: 50px;
-            border-radius: 100%;
+            // border-radius: 100%;
             transition: 300ms;
             position: relative;
-            top: 5px;
-            right: 5px;
+            top: 0px;
+            right: 0px;
             border: none;
-            
-            &.glass {
-                background-color: $secondary;
-                svg {
-                    height: 23px;
-                    width: 23px;
-                    fill: #fff;
+            cursor: pointer;
+            svg {
+                height: 23px;
+                width: 23px;
+                fill: #000;
+                stroke-width: 2px;
+                g {
                     stroke-width: 2px;
-                    g {
-                        stroke-width: 2px;
-                        fill: #fff;
-                    }
+                    fill: #000;
                 }
-                &::after,
-                &::before {
-                    content: none;
-                }
-                &:hover {
-                    transform: none;
-                }
+            }
+            &::after,
+            &::before {
+                content: none;
+            }
+            &:hover {
+                background-color: $primary600;
             }
         }
     }

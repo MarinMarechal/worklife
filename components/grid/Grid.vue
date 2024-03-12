@@ -1,13 +1,16 @@
 <template>
     <div id="grid">
         <div class="grid_container">
-            <div class="grid_tile" v-for="item in items" :key="item.id" @click="toModal(item)">
+            <div class="grid_tile" v-for="item in itemsList" :key="item.id" @click="toModal(item)">
                 <img :src="item.headerImage.url" :alt="item.title">
                 <div class="grid_tile_hover">
                     <h4>
                         {{ item.longTitle }}
                     </h4>
                 </div>
+            </div>
+            <div class="grid_no_result" v-if="isError">
+                <p>No results match your search criteria</p>
             </div>
         </div>
         <Loader v-if="isLoading"/>
@@ -18,7 +21,9 @@
 </template>
 
 <script>
-import Loader from '../UI/loader/Loader.vue';
+import {mapState} from 'vuex'
+
+import Loader from '@/components/UI/loader/Loader.vue';
 
 export default {
     components: {
@@ -26,9 +31,17 @@ export default {
     },
     data() {
         return {
-            items: null,
-            isLoading: false
+            itemsList: null,
+            isLoading: false,
+            isError: false,
         }
+    },
+    computed: mapState(['items']),
+    watch: {
+        "$store.state.items" (newValue, oldValue) {
+            this.itemsList = newValue;
+            this.itemsList.length ? this.isError = false : this.isError = true;
+        },
     },
     methods: {
         toModal(item) {
@@ -42,7 +55,7 @@ export default {
         }
     },
     mounted() {
-        this.items = this.$store.state.items;
+        this.itemsList = this.$store.state.items;
     },
 }
 </script>
@@ -63,6 +76,7 @@ export default {
         cursor: pointer;
         border-radius: 8px;
         overflow: hidden;
+        border: 2px solid $primary;
         &::before {
             content: "";
             display: block;
@@ -78,7 +92,7 @@ export default {
             left: 0;
         }
         &_hover {
-            background-color: $secondary;
+            background-color: #000;
             position: absolute;
             height: 70%;
             top: 30%;
@@ -112,6 +126,13 @@ export default {
                     transition-delay: 300ms;
                 }
             }
+        }
+    }
+    .grid_no_result {
+        p {
+            text-align: center;
+            font-size: 1.4rem;
+            color: red;
         }
     }
     .custom_button {

@@ -2,10 +2,10 @@
     <div id="item">
         <Button @click.native="$router.go(-1)">Back</Button>
         <div class="item_content">
-            <img class="item_content_image" src="@/assets/images/image.png" alt="">
+            <img class="item_content_image" :src="item.headerImage.url" :alt="item.title">
             <div class="item_content_infos">
-                <h2>title</h2>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim voluptatibus architecto nisi obcaecati, beatae laboriosam odit, distinctio commodi aliquid numquam, sint sequi quae! Accusamus ipsum amet molestiae. Alias, obcaecati labore.</p>
+                <h2>{{item.title}}</h2>
+                <p>{{ item.longTitle }}</p>
                 <strong>Category</strong>
                 <ul>
                     <li>
@@ -22,16 +22,41 @@
                     </li>
                 </ul>
             </div>
-            <Button :color="'secondary'">Add to favorites</Button>
+            <Button @click.native="toFavorites" v-if="isFavorites">Remove from favorites</Button>
+            <Button @click.native="toFavorites" v-else>Add to favorites</Button>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    methods: {
-
+    data() {
+        return {
+            isFavorites: false
+        }
     },
+    computed: {
+        item() {
+            return this.$store.state.item
+        }
+    },
+    methods: {
+        toFavorites() {
+            if (this.isFavorites) {
+                this.$store.dispatch('removeFavorite', this.item);
+            } else {
+                this.$store.dispatch('toFavorites', this.item);
+            }
+            this.isFavorites = !this.isFavorites;
+        }
+    },
+    mounted() {
+        this.$store.state.favorites.forEach(e => {
+            if (e.id == this.item.id) {
+                this.isFavorites = true
+            };
+        });
+    }
 }
 </script>
 
@@ -50,6 +75,9 @@ export default {
             grid-area: image;
             width: 100%;
             height: auto;
+            min-height: 40rem;
+            object-fit: cover;
+            border-radius: 6px;
         }
         &_infos {
             grid-area: infos;
